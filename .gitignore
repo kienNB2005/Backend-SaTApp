@@ -1,0 +1,18 @@
+# Ignore environment variables
+.env
+.env.hub
+*.env
+
+# Ignore IDE settings
+.idea/
+.vscode/
+*.iml
+
+# Ignore build outputs
+dekiru/target/
+dekiru/bin/
+compile_output.txt
+
+# Ignore OS files
+Thumbs.db
+Desktop.ini
