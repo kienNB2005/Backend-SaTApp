@@ -4,12 +4,14 @@ import ken.example.dekiru.report.dto.*;
 import ken.example.dekiru.report.repository.AdminReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AdminReportService {
 
     private final AdminReportRepository adminReportRepository;

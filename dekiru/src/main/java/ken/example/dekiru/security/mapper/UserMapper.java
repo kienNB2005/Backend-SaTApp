@@ -53,6 +53,7 @@ public interface UserMapper {
     @Mapping(source = "user.gender", target = "gender")
     @Mapping(source = "user.birthday", target = "birthday")
     @Mapping(source = "user.birthPlace", target = "birthPlace")
+    @Mapping(source = "user.role", target = "role")
     @Mapping(source = "faculty.code", target = "facultyCode")
     @Mapping(source = "faculty.name", target = "facultyName")
     LecturerResponse toLecturerResponse(Lecturer lecturer);

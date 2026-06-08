@@ -37,6 +37,7 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Transactional(readOnly = true)
 public class DepartmentService {
 
     DepartmentRepository departmentRepository;
@@ -209,6 +210,7 @@ public class DepartmentService {
     }
 
     // ✅ Sửa bộ môn (chỉ sửa facultyId - khóa ngoại)
+    @Transactional
     public DepartmentResponse updateDepartment(Long id, UpdateDepartmentRequest request) {
         Department department = departmentRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED));
@@ -229,6 +231,7 @@ public class DepartmentService {
     }
 
     // ✅ Xóa bộ môn
+    @Transactional
     public void deleteDepartment(Long id) {
         Department department = departmentRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED));
@@ -242,6 +245,7 @@ public class DepartmentService {
         departmentRepository.deleteById(id);
     }
 
+    @Transactional
     public DepartmentResponse createDepartment(CreateDepartmentRequest request) {
         if (departmentRepository.existsByCode(request.getCode())) {
             throw new AppException(ErrorCode.DEPARTMENT_EXISTED);

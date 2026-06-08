@@ -3,6 +3,8 @@ package ken.example.dekiru.report.service;
 import ken.example.dekiru.academic.entity.AdministrativeClass;
 import ken.example.dekiru.academic.repository.AdministrativeClassRepository;
 import ken.example.dekiru.common.config.SecurityUtils;
+import ken.example.dekiru.common.exception.AppException;
+import ken.example.dekiru.common.exception.ErrorCode;
 import ken.example.dekiru.report.dto.LecturerReportResponse;
 import ken.example.dekiru.report.dto.LecturerReportStudentDto;
 import ken.example.dekiru.report.dto.LecturerReportStudentProjection;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class HomeroomReportService {
 
     private final HomeroomReportRepository homeroomReportRepository;
@@ -157,7 +160,7 @@ public class HomeroomReportService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy lớp hành chính."));
         
         if (adminClass.getHomeroomTeacher() == null || !adminClass.getHomeroomTeacher().getId().equals(lecturerId)) {
-            throw new RuntimeException("Access Denied: Bạn không phải là giáo viên chủ nhiệm của lớp này.");
+            throw new AppException(ErrorCode.NO_PERMISSION_REPORT);
         }
     }
 }

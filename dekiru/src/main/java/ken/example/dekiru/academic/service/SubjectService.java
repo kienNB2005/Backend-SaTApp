@@ -35,6 +35,7 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Transactional(readOnly = true)
 public class SubjectService {
 
     SubjectRepository subjectRepository;
@@ -195,6 +196,7 @@ public class SubjectService {
     }
 
     // ✅ Sửa môn học (chỉ sửa name, credits)
+    @Transactional
     public SubjectResponse updateSubject(Long id, UpdateSubjectRequest request) {
         Subject subject = subjectRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.SUBJECT_NOT_EXISTED));
@@ -212,6 +214,7 @@ public class SubjectService {
     }
 
     // ✅ Xóa môn học
+    @Transactional
     public void deleteSubject(Long id) {
         Subject subject = subjectRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.SUBJECT_NOT_EXISTED));
@@ -225,6 +228,7 @@ public class SubjectService {
         subjectRepository.deleteById(id);
     }
 
+    @Transactional
     public SubjectResponse createSubject(CreateSubjectRequest request) {
         if (subjectRepository.existsByCode(request.getCode())) {
             throw new AppException(ErrorCode.SUBJECT_EXISTED);

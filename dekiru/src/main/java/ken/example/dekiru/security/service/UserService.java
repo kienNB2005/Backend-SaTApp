@@ -47,6 +47,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @FieldDefaults (level = AccessLevel.PRIVATE, makeFinal = true)
 @Service
+@Transactional(readOnly = true)
 public class UserService  {
     UserRepository userRepository;
     StudentRepository studentRepository;
@@ -437,13 +438,13 @@ public class UserService  {
         if (!user.getEmail().equals(request.getEmail()) && userRepository.existsByEmail(request.getEmail())) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
-
         userMapper.updateUserFromLecturerRequest(request, user);
         userRepository.save(user);
 
         if (!lecturer.getFaculty().getId().equals(request.getFacultyId())) {
             Faculty faculty = facultyRepository.findById(request.getFacultyId())
                     .orElseThrow(() -> new AppException(ErrorCode.FACULTY_NOT_EXISTED));
+
             lecturer.setFaculty(faculty);
             lecturerRepository.save(lecturer);
         }
@@ -466,7 +467,7 @@ public class UserService  {
         User user = User.builder()
                 .email(request.getEmail())
                 .fullName(request.getFullName())
-                .role(User.Role.lecturer)
+                .role(request.getRole() != null ? request.getRole() : User.Role.lecturer)
                 .isActive(true)
                 .phoneNumber(request.getPhoneNumber())
                 .gender(parseGender(request.getGender()))

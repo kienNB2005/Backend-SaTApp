@@ -39,6 +39,7 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Transactional(readOnly = true)
 public class AdministrativeClassService {
 
     AdministrativeClassRepository administrativeClassRepository;
@@ -243,6 +244,7 @@ public class AdministrativeClassService {
     }
 
     // ✅ Sửa lớp hành chính (sửa name, cohortYear, lecturerId)
+    @Transactional
     public AdministrativeClassResponse updateAdministrativeClass(Long id, UpdateAdministrativeClassRequest request) {
         AdministrativeClass administrativeClass = administrativeClassRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ADMINISTRATIVE_CLASS_NOT_EXISTED));
@@ -271,6 +273,7 @@ public class AdministrativeClassService {
     }
 
     // ✅ Xóa lớp hành chính
+    @Transactional
     public void deleteAdministrativeClass(Long id) {
         AdministrativeClass administrativeClass = administrativeClassRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ADMINISTRATIVE_CLASS_NOT_EXISTED));
@@ -283,6 +286,7 @@ public class AdministrativeClassService {
         administrativeClassRepository.deleteById(id);
     }
 
+    @Transactional
     public AdministrativeClassResponse createAdministrativeClass(CreateAdministrativeClassRequest request) {
         if (administrativeClassRepository.existsByCode(request.getCode())) {
             throw new AppException(ErrorCode.ADMINISTRATIVE_CLASS_EXISTED);

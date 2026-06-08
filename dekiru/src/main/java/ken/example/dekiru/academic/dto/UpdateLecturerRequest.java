@@ -2,6 +2,7 @@ package ken.example.dekiru.academic.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import ken.example.dekiru.security.entity.User;
 import lombok.*;
 
 @Getter
@@ -26,5 +27,6 @@ public class UpdateLecturerRequest {
     private String gender;
     private java.time.LocalDate birthday;
     private String birthPlace;
+    private User.Role role;
 }
 

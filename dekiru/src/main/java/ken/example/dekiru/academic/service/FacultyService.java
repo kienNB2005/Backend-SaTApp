@@ -35,6 +35,7 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Transactional(readOnly = true)
 public class FacultyService {
 
     FacultyRepository facultyRepository;
@@ -190,6 +191,7 @@ public class FacultyService {
     }
 
     // ✅ Sửa khoa (chỉ sửa name)
+    @Transactional
     public FacultyResponse updateFaculty(Long id, UpdateFacultyRequest request) {
         Faculty faculty = facultyRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.FACULTY_NOT_EXISTED));
@@ -203,6 +205,7 @@ public class FacultyService {
     }
 
     // ✅ Xóa khoa
+    @Transactional
     public void deleteFaculty(Long id) {
         Faculty faculty = facultyRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.FACULTY_NOT_EXISTED));
@@ -216,6 +219,7 @@ public class FacultyService {
         facultyRepository.deleteById(id);
     }
 
+    @Transactional
     public FacultyResponse createFaculty(CreateFacultyRequest request) {
         if (facultyRepository.existsByCode(request.getCode())) {
             throw new AppException(ErrorCode.FACULTY_EXISTED);

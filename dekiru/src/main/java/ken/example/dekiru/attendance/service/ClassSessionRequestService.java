@@ -4,10 +4,12 @@ import ken.example.dekiru.academic.entity.Room;
 import ken.example.dekiru.academic.repository.RoomRepository;
 import ken.example.dekiru.attendance.dto.ApproveSessionRequest;
 import ken.example.dekiru.attendance.dto.CancelSessionRequest;
+import ken.example.dekiru.attendance.dto.ClassSessionRequestResponse;
 import ken.example.dekiru.attendance.dto.MakeupSessionRequest;
 import ken.example.dekiru.attendance.entity.ClassSession;
 import ken.example.dekiru.attendance.entity.ClassSessionRequest;
 import ken.example.dekiru.attendance.entity.RequestStatus;
+import ken.example.dekiru.attendance.mapper.ClassSessionRequestMapper;
 import ken.example.dekiru.attendance.repository.ClassSessionRepository;
 import ken.example.dekiru.attendance.repository.ClassSessionRequestRepository;
 import ken.example.dekiru.common.config.SecurityUtils;
@@ -29,6 +31,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Transactional(readOnly = true)
 public class ClassSessionRequestService {
 
     ClassSessionRequestRepository requestRepository;
@@ -38,10 +41,11 @@ public class ClassSessionRequestService {
     UserRepository userRepository;
     SecurityUtils securityUtils;
     ClassSessionService classSessionService;
+    ClassSessionRequestMapper requestMapper;
 
     // Giảng viên gọi: Gửi yêu cầu hủy buổi
     @Transactional
-    public ClassSessionRequest createCancelRequest(Long classSessionId, CancelSessionRequest request) {
+    public ClassSessionRequestResponse createCancelRequest(Long classSessionId, CancelSessionRequest request) {
         Long lecturerId = securityUtils.getCurrentLecturerId();
         
         ClassSession session = classSessionRepository.findById(classSessionId)
@@ -71,12 +75,12 @@ public class ClassSessionRequestService {
                 .cancelStatus(RequestStatus.pending)
                 .build();
 
-        return requestRepository.save(newRequest);
+        return requestMapper.toResponse(requestRepository.save(newRequest));
     }
 
     // Giảng viên gọi: Gửi yêu cầu dạy bù
     @Transactional
-    public ClassSessionRequest createMakeupRequest(Long originalSessionId, MakeupSessionRequest request) {
+    public ClassSessionRequestResponse createMakeupRequest(Long originalSessionId, MakeupSessionRequest request) {
         Long lecturerId = securityUtils.getCurrentLecturerId();
 
         ClassSession originalSession = classSessionRepository.findById(originalSessionId)
@@ -134,28 +138,28 @@ public class ClassSessionRequestService {
         sessionRequest.setMakeupPeriodEnd(request.getPeriodEnd().intValue());
         sessionRequest.setMakeupRoom(makeupRoom);
 
-        return requestRepository.save(sessionRequest);
+        return requestMapper.toResponse(requestRepository.save(sessionRequest));
     }
 
     // Admin lấy danh sách nghỉ chờ duyệt
-    public List<ClassSessionRequest> getPendingCancelRequests() {
-        return requestRepository.findByCancelStatus(RequestStatus.pending);
+    public List<ClassSessionRequestResponse> getPendingCancelRequests() {
+        return requestMapper.toResponseList(requestRepository.findByCancelStatus(RequestStatus.pending));
     }
 
     // Admin lấy danh sách bù chờ duyệt
-    public List<ClassSessionRequest> getPendingMakeupRequests() {
-        return requestRepository.findByMakeupStatus(RequestStatus.pending);
+    public List<ClassSessionRequestResponse> getPendingMakeupRequests() {
+        return requestMapper.toResponseList(requestRepository.findByMakeupStatus(RequestStatus.pending));
     }
 
     // Giảng viên lấy lịch sử yêu cầu của mình
-    public List<ClassSessionRequest> getMyRequests() {
+    public List<ClassSessionRequestResponse> getMyRequests() {
         Long lecturerId = securityUtils.getCurrentLecturerId();
-        return requestRepository.findByLecturer_Id(lecturerId);
+        return requestMapper.toResponseList(requestRepository.findByLecturer_Id(lecturerId));
     }
 
     // Admin duyệt yêu cầu
     @Transactional
-    public ClassSessionRequest approveRequest(Long requestId, String type) {
+    public ClassSessionRequestResponse approveRequest(Long requestId, String type) {
         Long adminId = securityUtils.getCurrentUserId();
         User admin = userRepository.findById(adminId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
@@ -193,12 +197,12 @@ public class ClassSessionRequestService {
             throw new AppException(ErrorCode.INVALID_REQUEST_STATUS);
         }
 
-        return requestRepository.save(request);
+        return requestMapper.toResponse(requestRepository.save(request));
     }
 
     // Admin từ chối yêu cầu
     @Transactional
-    public ClassSessionRequest rejectRequest(Long requestId, String type, ApproveSessionRequest dto) {
+    public ClassSessionRequestResponse rejectRequest(Long requestId, String type, ApproveSessionRequest dto) {
         Long adminId = securityUtils.getCurrentUserId();
         User admin = userRepository.findById(adminId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
@@ -226,6 +230,6 @@ public class ClassSessionRequestService {
             throw new AppException(ErrorCode.INVALID_REQUEST_STATUS);
         }
 
-        return requestRepository.save(request);
+        return requestMapper.toResponse(requestRepository.save(request));
     }
 }

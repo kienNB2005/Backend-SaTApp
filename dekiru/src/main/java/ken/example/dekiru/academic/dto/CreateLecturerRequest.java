@@ -1,5 +1,6 @@
 package ken.example.dekiru.academic.dto;
 
+import ken.example.dekiru.security.entity.User;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -17,4 +18,5 @@ public class CreateLecturerRequest {
     String gender;
     java.time.LocalDate birthday;
     String birthPlace;
+    User.Role role;
 }

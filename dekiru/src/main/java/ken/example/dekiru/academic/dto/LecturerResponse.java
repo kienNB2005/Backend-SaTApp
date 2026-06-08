@@ -24,5 +24,6 @@ public class LecturerResponse {
     String gender;
     java.time.LocalDate birthday;
     String birthPlace;
+    ken.example.dekiru.security.entity.User.Role role;
 }
 

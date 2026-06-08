@@ -36,6 +36,7 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Transactional(readOnly = true)
 public class RoomService {
 
     // ✅ Sức chứa mặc định khi không truyền vào
@@ -230,6 +231,7 @@ public class RoomService {
         return roomMapper.toRoomResponse(roomRepository.save(room));
     }
 
+    @Transactional
     public void deleteRoom(Long id) {
         // 1. Kiểm tra phòng có tồn tại không
         roomRepository.findById(id)
@@ -264,6 +266,7 @@ public class RoomService {
         return dataFormatter.formatCellValue(row.getCell(cellIndex)).trim();
     }
 
+    @Transactional
     public RoomResponse createRoom(CreateRoomRequest request) {
         if (roomRepository.existsByCode(request.getCode())) {
             throw new AppException(ErrorCode.ROOM_EXISTED);

@@ -23,6 +23,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Transactional(readOnly = true)
 public class SemesterService {
 
     SemesterRepository semesterRepository;
@@ -136,6 +137,7 @@ public class SemesterService {
     }
 
     // ✅ Xóa học kỳ
+    @Transactional
     public void deleteSemester(Long id) {
         Semester semester = semesterRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.SEMESTER_NOT_EXISTED));

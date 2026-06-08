@@ -91,7 +91,8 @@ public enum ErrorCode {
     SEMESTER_NOT_FOUND (1137, "Không tìm thấy học kỳ", HttpStatus.NOT_FOUND),
     SEMESTER_EXISTED (1138, "Tên học kỳ đã tồn tại", HttpStatus.CONFLICT),
     SEMESTER_OVERLAP (1139, "Khoảng thời gian của học kỳ bị trùng lặp với học kỳ khác", HttpStatus.CONFLICT),
-    INVALID_START_DATE_PAST (1140, "Ngày bắt đầu học kỳ không được nằm trong quá khứ", HttpStatus.BAD_REQUEST);
+    INVALID_START_DATE_PAST (1140, "Ngày bắt đầu học kỳ không được nằm trong quá khứ", HttpStatus.BAD_REQUEST),
+    NO_PERMISSION_REPORT (1141, "Bạn không có quyền xem báo cáo lớp học này", HttpStatus.FORBIDDEN);
     private final int code;
     private final String message;
     private final HttpStatus httpStatus; // Thêm trường này

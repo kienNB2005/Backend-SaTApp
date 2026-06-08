@@ -44,6 +44,7 @@ import org.springframework.data.jpa.domain.Specification;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Transactional(readOnly = true)
 public class ScheduleService {
 
     ScheduleRepository scheduleRepository;
@@ -58,7 +59,6 @@ public class ScheduleService {
      * Lấy danh sách TKB phân trang + tìm kiếm + lọc.
      * Nếu semesterId == null → tự lấy học kỳ đang active.
      */
-    @Transactional(readOnly = true)
     public Page<ScheduleResponse> getSchedules(Long semesterId, String search,
                                                 Long adminClassId, Long lecturerId,
                                                 Integer dayOfWeek, Pageable pageable) {
@@ -114,7 +114,8 @@ public class ScheduleService {
     /**
      * Bước 1: Preview — Đọc file Excel, validate từng dòng, trả về danh sách preview.
      */
-    @Transactional(readOnly = true)
+
+    @Transactional
     public List<SchedulePreviewResponse> previewImportSchedule(MultipartFile file) {
         List<ScheduleExcelDTO> rawList = new ArrayList<>();
 

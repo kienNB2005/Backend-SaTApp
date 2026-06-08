@@ -1,6 +1,8 @@
 package ken.example.dekiru.report.service;
 
 import ken.example.dekiru.common.config.SecurityUtils;
+import ken.example.dekiru.common.exception.AppException;
+import ken.example.dekiru.common.exception.ErrorCode;
 import ken.example.dekiru.report.dto.LecturerReportResponse;
 import ken.example.dekiru.report.dto.LecturerReportStudentDto;
 import ken.example.dekiru.report.dto.LecturerReportStudentProjection;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class LecturerReportService {
 
     private final LecturerReportRepository lecturerReportRepository;
@@ -158,7 +161,7 @@ public class LecturerReportService {
                 semesterId, subjectId, adminClassId, lecturerId);
         
         if (!hasAccess) {
-            throw new RuntimeException("Access Denied: Giảng viên không có quyền truy cập dữ liệu của lớp/môn này trong học kỳ này.");
+            throw new AppException(ErrorCode.NO_PERMISSION_REPORT);
         }
     }
 }

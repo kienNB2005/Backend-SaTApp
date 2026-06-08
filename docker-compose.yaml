@@ -23,7 +23,7 @@ services:
     build:
       context: ./dekiru
       dockerfile: Dockerfile
-    image: kienvanbau/satapp-backend:1.0
+    image: kienvanbau/satapp-backend:2.0
     container_name: dekiru-backend-local
     ports:
       - "8080:8080"
