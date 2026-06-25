@@ -37,4 +37,8 @@ public class AuthenticationController {
         return authenticationService.refresh(refreshToken);
     }
 
+    @GetMapping("/health")
+    public ApiResponse<String> health() {
+        return ApiResponse.success("OK");
+    }
 }

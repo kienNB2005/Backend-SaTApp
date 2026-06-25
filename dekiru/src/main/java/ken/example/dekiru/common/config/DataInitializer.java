@@ -24,7 +24,7 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println(">>> Đã khởi tạo tài khoản Admin đầu tiên!");
         }
         else {
-            System.out.println(">>> Admin đã tồn tại rồi, đéo tạo nữa!"); // THÊM DÒNG NÀY NỮA
+            System.out.println(">>> Admin đã tồn tại rồi, không tạo nữa!"); // THÊM DÒNG NÀY NỮA
         }
     }
 }

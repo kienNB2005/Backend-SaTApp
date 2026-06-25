@@ -89,8 +89,10 @@ public class ScheduleController {
      */
     @PostMapping("/import/preview")
     @PreAuthorize("hasRole('ADMIN')")
-    public ApiResponse<List<SchedulePreviewResponse>> previewImport(@RequestParam("file") MultipartFile file) {
-        List<SchedulePreviewResponse> response = scheduleService.previewImportSchedule(file);
+    public ApiResponse<List<SchedulePreviewResponse>> previewImport(
+            @RequestParam("semesterId") Long semesterId,
+            @RequestParam("file") MultipartFile file) {
+        List<SchedulePreviewResponse> response = scheduleService.previewImportSchedule(semesterId, file);
         return ApiResponse.success(response, "Preview danh sách import thời khóa biểu");
     }
 
@@ -104,5 +106,15 @@ public class ScheduleController {
             @RequestBody List<ScheduleExcelDTO> schedules) {
         Map<String, Object> stats = scheduleService.confirmImportSchedule(semesterId, schedules);
         return ApiResponse.success(stats, "Import thời khóa biểu thành công");
+    }
+
+    /**
+     * Xóa toàn bộ thời khóa biểu của 1 học kỳ (chỉ áp dụng cho học kỳ chưa hoạt động).
+     */
+    @DeleteMapping("/semester/{semesterId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<Void> deleteAllSchedulesBySemester(@PathVariable Long semesterId) {
+        scheduleService.deleteAllSchedulesBySemester(semesterId);
+        return ApiResponse.success(null, "Xóa toàn bộ thời khóa biểu của học kỳ thành công");
     }
 }

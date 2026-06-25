@@ -53,6 +53,7 @@ public class ScheduleService {
     AdministrativeClassRepository administrativeClassRepository;
     LecturerRepository lecturerRepository;
     RoomRepository roomRepository;
+    ken.example.dekiru.attendance.repository.ClassSessionRepository classSessionRepository;
     Validator validator;
 
     /**
@@ -116,7 +117,14 @@ public class ScheduleService {
      */
 
     @Transactional
-    public List<SchedulePreviewResponse> previewImportSchedule(MultipartFile file) {
+    public List<SchedulePreviewResponse> previewImportSchedule(Long semesterId, MultipartFile file) {
+        Semester semester = semesterRepository.findById(semesterId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy học kỳ với ID: " + semesterId));
+
+        long daysBetween = java.time.temporal.ChronoUnit.DAYS.between(semester.getStartDate(), semester.getEndDate());
+        long totalWeeks = (long) Math.ceil((daysBetween + 1) / 7.0);
+        int maxWeekEnd = semester.getStartWeek() + (int) totalWeeks - 1;
+
         List<ScheduleExcelDTO> rawList = new ArrayList<>();
 
         // ---- Đọc Excel ----
@@ -261,8 +269,16 @@ public class ScheduleService {
                 }
             }
 
-            // Kiểm tra tuần bắt đầu <= tuần kết thúc
+            // Kiểm tra tuần bắt đầu và kết thúc có hợp lệ theo học kỳ không
             if (dto.getWeekStart() != null && dto.getWeekEnd() != null) {
+                if (dto.getWeekStart() < semester.getStartWeek()) {
+                    response.setValid(false);
+                    response.getErrors().add("Tuần bắt đầu (" + dto.getWeekStart() + ") không được nhỏ hơn tuần bắt đầu của học kỳ (" + semester.getStartWeek() + ")");
+                }
+                if (dto.getWeekEnd() > maxWeekEnd) {
+                    response.setValid(false);
+                    response.getErrors().add("Tuần kết thúc (" + dto.getWeekEnd() + ") vượt quá thời gian của học kỳ (tối đa " + maxWeekEnd + " tuần)");
+                }
                 if (dto.getWeekStart() > dto.getWeekEnd()) {
                     response.setValid(false);
                     response.getErrors().add("Tuần bắt đầu phải <= tuần kết thúc");
@@ -379,5 +395,29 @@ public class ScheduleService {
             return null;
         }
         return null;
+    }
+
+    @Transactional
+    public void deleteAllSchedulesBySemester(Long semesterId) {
+        ken.example.dekiru.academic.entity.Semester semester = semesterRepository.findById(semesterId)
+                .orElseThrow(() -> new AppException(ErrorCode.SEMESTER_NOT_FOUND));
+
+        if (semester.getIsActive() != null && semester.getIsActive()) {
+            throw new RuntimeException("Không thể xóa thời khóa biểu của học kỳ đang hoạt động.");
+        }
+
+        // Kiểm tra xem học kỳ này đã có dữ liệu điểm danh chưa (nếu có tức là học kỳ quá khứ hoặc đang diễn ra)
+        boolean hasStartedSessions = classSessionRepository.existsBySchedule_SemesterIdAndStatusIn(
+                semesterId, List.of(ClassSession.Status.open, ClassSession.Status.closed));
+
+        if (hasStartedSessions) {
+            throw new RuntimeException("Không thể xóa thời khóa biểu vì học kỳ này đã có dữ liệu điểm danh (thuộc về quá khứ).");
+        }
+
+        // Xóa tất cả ClassSession của học kỳ này
+        classSessionRepository.deleteBySchedule_SemesterId(semesterId);
+
+        // Sau đó xóa tất cả Schedule
+        scheduleRepository.deleteBySemesterId(semesterId);
     }
 }

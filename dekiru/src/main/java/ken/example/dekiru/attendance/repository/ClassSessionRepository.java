@@ -20,6 +20,11 @@ public interface ClassSessionRepository extends JpaRepository<ClassSession, Long
      long countByScheduleId(Long scheduleId);
      boolean existsByScheduleId(Long scheduleId);
     boolean existsBySchedule_SemesterIdAndStatusIn(Long semesterId, Collection<ClassSession.Status> statuses);
+    
+    boolean existsByScheduleIdAndStatusIn(Long scheduleId, Collection<ClassSession.Status> statuses);
+    void deleteByScheduleId(Long scheduleId);
+    void deleteBySchedule_SemesterId(Long semesterId);
+
     long countByActualRoom_Id(Long roomId);
     boolean existsByActualRoom_Id(Long roomId); // Đổi count thành exists
     

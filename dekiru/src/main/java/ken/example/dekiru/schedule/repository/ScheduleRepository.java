@@ -16,6 +16,7 @@ import java.util.List;
 @Repository
 public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSpecificationExecutor<Schedule> {
     List<Schedule> findAllBySemesterId(Long semesterId);
+    void deleteBySemesterId(Long semesterId);
     long countBySemesterId(Long semesterId);
     boolean existsBySemesterId(Long semesterId);
     long countByAdminClassId(Long administrativeClassId);

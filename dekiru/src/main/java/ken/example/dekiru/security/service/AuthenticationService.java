@@ -85,7 +85,7 @@ public class AuthenticationService {
 
         // B2: Kiểm tra trạng thái hoạt động
         if (!user.getIsActive()) {
-            throw new RuntimeException("Tài khoản đã bị khóa!");
+            throw new AppException(ErrorCode.ACCOUNT_lOCKED);
         }
 
 //        // B3: Cập nhật googleId nếu là lần đầu (Binding tài khoản)

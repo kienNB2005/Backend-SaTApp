@@ -31,7 +31,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests((authorize) -> authorize
                         // public
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/auth/login", "/auth/refresh","/auth/register").permitAll()
+                        .requestMatchers("/auth/login", "/auth/refresh","/auth/register","/auth/health").permitAll()
 
                         // Chỉ định các API yêu cầu xác thực chung
                         .requestMatchers("/api/v1/**").authenticated()

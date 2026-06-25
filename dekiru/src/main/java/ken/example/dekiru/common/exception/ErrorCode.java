@@ -92,7 +92,10 @@ public enum ErrorCode {
     SEMESTER_EXISTED (1138, "Tên học kỳ đã tồn tại", HttpStatus.CONFLICT),
     SEMESTER_OVERLAP (1139, "Khoảng thời gian của học kỳ bị trùng lặp với học kỳ khác", HttpStatus.CONFLICT),
     INVALID_START_DATE_PAST (1140, "Ngày bắt đầu học kỳ không được nằm trong quá khứ", HttpStatus.BAD_REQUEST),
-    NO_PERMISSION_REPORT (1141, "Bạn không có quyền xem báo cáo lớp học này", HttpStatus.FORBIDDEN);
+    NO_PERMISSION_REPORT (1141, "Bạn không có quyền xem báo cáo lớp học này", HttpStatus.FORBIDDEN),
+    ACCOUNT_lOCKED(1300, "Tài khoản đã bị khóa", HttpStatus.FORBIDDEN),
+    SCHEDULE_NOT_FOUND(1301, "Không tìm thấy lịch biểu", HttpStatus.NOT_FOUND),
+    SCHEDULE_HAS_SESSIONS(1302, "Không thể xóa lịch biểu khi đang có buổi học", HttpStatus.CONFLICT);
     private final int code;
     private final String message;
     private final HttpStatus httpStatus; // Thêm trường này
