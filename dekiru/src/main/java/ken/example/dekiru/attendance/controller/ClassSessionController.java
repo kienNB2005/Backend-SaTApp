@@ -54,7 +54,11 @@ public class ClassSessionController {
         return ApiResponse.success(response, "Làm mới mã QR thành công (" + response.getType() + ")");
     }
 
-
+    @PatchMapping ("/{id}/qr/clear")
+    public ApiResponse<Void> clearQrToken(@PathVariable Long id) {
+        classSessionService.clearQrToken(id);
+        return ApiResponse.success(null, "Đã khóa điểm danh thành công");
+    }
 
 //    @GetMapping("/{id}/suggested-slots")
 //    public ApiResponse<List<SuggestedSlotDto>> getSuggestedSlots(

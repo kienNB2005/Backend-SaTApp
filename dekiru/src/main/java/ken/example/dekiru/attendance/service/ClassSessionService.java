@@ -243,6 +243,15 @@ public class ClassSessionService {
     }
 
     @Transactional
+    public void clearQrToken(Long sessionId) {
+        ClassSession session = getAndValidateLecturerSession(sessionId, true);
+        ensureSessionIsOpen(session);
+
+        session.setQrToken(null);
+        session.setQrExpiresAt(null);
+    }
+
+    @Transactional
     public void studentAttend(StudentAttendRequest request) {
         Long studentId = securityUtils.getCurrentStudentId();
 
