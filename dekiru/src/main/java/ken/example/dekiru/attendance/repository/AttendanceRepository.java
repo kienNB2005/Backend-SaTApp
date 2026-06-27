@@ -109,4 +109,16 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
             @Param("dbStatus") String dbStatus,
             @Param("isLate") Boolean isLate,
             Pageable pageable);
+    @Modifying
+    @Query("""
+    UPDATE Attendance a
+    SET a.checkedOutAt = null,
+        a.checkoutEvent = null,
+        a.checkoutLat = null,
+        a.checkoutLng = null
+    WHERE a.classSession.id = :sessionId
+      AND a.status = 'present'
+      AND a.leftEarly = false
+    """)
+    void resetCheckoutDataForSession(@Param("sessionId") Long sessionId);
 }

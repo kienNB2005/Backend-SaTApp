@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+// Màn hình điểm danh của giảng viên, hiển thị danh sách sinh viên và trạng thái điểm danh realtime
 public class AttendanceSummaryDto {
     private Long attendanceId;
     private String studentCode;

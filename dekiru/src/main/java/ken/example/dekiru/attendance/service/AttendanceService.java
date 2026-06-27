@@ -145,12 +145,23 @@ public class AttendanceService {
 
             if (item.getLeftEarly() != null) {
                 attendance.setLeftEarly(item.getLeftEarly());
+                if (item.getLeftEarly()) {
+                    attendance.setCheckedOutAt(null);
+                    attendance.setCheckoutEvent(null);
+                    attendance.setCheckoutLat(null);
+                    attendance.setCheckoutLng(null);
+                }
                 isChanged = true;
             }
 
             if (item.getNote() != null) {
                 attendance.setNote(item.getNote());
                 isChanged = true;
+            }
+
+            // Bắt buộc: Chỉ những sinh viên 'present' (có mặt/đi muộn) mới được phép có cờ 'leftEarly'
+            if (attendance.getStatus() != Attendance.Status.present && Boolean.TRUE.equals(attendance.getLeftEarly())) {
+                throw new AppException(ErrorCode.LEFT_EARLY_NOT_ALLOWED);
             }
 
             if (isChanged) {

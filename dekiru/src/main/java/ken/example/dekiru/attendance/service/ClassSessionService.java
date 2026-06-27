@@ -189,6 +189,9 @@ public class ClassSessionService {
             throw new AppException(ErrorCode.CHECKOUT_ALREADY_ACTIVE);
         }
 
+        // RESET toàn bộ lịch sử checkout của các đợt trước (nếu có)
+        attendanceRepository.resetCheckoutDataForSession(sessionId);
+
         CheckoutEvent checkoutEvent = CheckoutEvent.builder()
                 .classSession(session).triggeredBy(session.getActualLecturer().getUser())
                 .triggeredAt(LocalDateTime.now()).deadlineAt(LocalDateTime.now().plusMinutes(checkoutMins))
@@ -347,6 +350,9 @@ public class ClassSessionService {
         } else if ("CHECK_OUT".equalsIgnoreCase(payload.type())) {
             if (attendance.getScannedAt() == null) {
                 throw new AppException(ErrorCode.NOT_CHECKED_IN);
+            }
+            if (attendance.getLeftEarly()) {
+                throw new AppException(ErrorCode.ALREADY_LEFT_EARLY);
             }
             if (attendance.getCheckedOutAt() != null) {
                 throw new AppException(ErrorCode.ALREADY_CHECKED_OUT);
