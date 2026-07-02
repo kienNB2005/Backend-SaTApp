@@ -29,7 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-
+import ken.example.dekiru.academic.repository.RoomRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -53,7 +53,7 @@ public class ClassSessionService {
     ScheduleRepository scheduleRepository;
     AdministrativeClassMapper administrativeClassMapper;
     SubjectMapper subjectMapper;
-    ken.example.dekiru.academic.repository.RoomRepository roomRepository;
+    RoomRepository roomRepository;
     ken.example.dekiru.academic.repository.SemesterRepository semesterRepository;
     // ==========================================
     // PRIVATE HELPER METHODS
@@ -303,9 +303,9 @@ public class ClassSessionService {
         Attendance attendance = attendanceRepository.findByClassSessionIdAndStudentIdWithLock(session.getId(), studentId)
                 .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_IN_CLASS));
 
-        if (attendance.getStatus() == Attendance.Status.excused) {
-            throw new AppException(ErrorCode.ATTENDANCE_EXCUSED);
-        }
+//        if (attendance.getStatus() == Attendance.Status.excused) {
+//            throw new AppException(ErrorCode.ATTENDANCE_EXCUSED);
+//        }
 
         LocalDateTime now = LocalDateTime.now();
         if (deviceId != null && !deviceId.trim().isEmpty()) {
@@ -332,7 +332,7 @@ public class ClassSessionService {
                         throw new AppException(ErrorCode.OUT_OF_LOCATION);
                     }
                 } else {
-                    attendance.setGpsVerified(null);
+                    throw new AppException(ErrorCode.LOCATION_REQUIRED);
                 }
             } else {
                 attendance.setGpsVerified(null);

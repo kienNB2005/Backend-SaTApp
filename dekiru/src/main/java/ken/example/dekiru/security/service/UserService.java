@@ -389,8 +389,11 @@ public class UserService  {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
 
+        if(!user.getEmail().equalsIgnoreCase(request.getEmail())){
+            user.setGoogleId(null);
+        }
+
         userMapper.updateUserFromStudentRequest(request, user);
-        
         userRepository.save(user);
         return userMapper.toStudentResponse(student);
     }
@@ -437,6 +440,9 @@ public class UserService  {
         User user = lecturer.getUser();
         if (!user.getEmail().equals(request.getEmail()) && userRepository.existsByEmail(request.getEmail())) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
+        }
+        if(!user.getEmail().equalsIgnoreCase(request.getEmail())){
+            user.setGoogleId(null);
         }
         userMapper.updateUserFromLecturerRequest(request, user);
         userRepository.save(user);
