@@ -1,6 +1,7 @@
 package ken.example.dekiru.attendance.service;
 import ken.example.dekiru.attendance.entity.ClassSession;
 import ken.example.dekiru.attendance.entity.CheckoutEvent;
+import ken.example.dekiru.attendance.scheduler.CheckoutDeadlineScheduler;
 import ken.example.dekiru.schedule.entity.Schedule;
 import ken.example.dekiru.academic.entity.Room;
 import ken.example.dekiru.schedule.entity.PeriodTime;
@@ -55,6 +56,7 @@ public class ClassSessionService {
     SubjectMapper subjectMapper;
     RoomRepository roomRepository;
     ken.example.dekiru.academic.repository.SemesterRepository semesterRepository;
+    CheckoutDeadlineScheduler checkoutDeadlineScheduler;
     // ==========================================
     // PRIVATE HELPER METHODS
     // ==========================================
@@ -197,6 +199,11 @@ public class ClassSessionService {
                 .triggeredAt(LocalDateTime.now()).deadlineAt(LocalDateTime.now().plusMinutes(checkoutMins))
                 .build();
         checkoutEventRepository.save(checkoutEvent);
+
+        checkoutDeadlineScheduler.scheduleClose(
+                checkoutEvent.getId(),
+                checkoutEvent.getDeadlineAt()
+        );
 
         return generateQrToken(session, "CHECK_OUT");
     }
