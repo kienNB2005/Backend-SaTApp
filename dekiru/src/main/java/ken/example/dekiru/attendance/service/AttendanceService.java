@@ -117,10 +117,17 @@ public class AttendanceService {
                 switch (item.getUiStatus().toUpperCase()) {
                     case "PRESENT":
                         attendance.setStatus(Attendance.Status.present);
+                        if (attendance.getScannedAt() == null) {
+                            attendance.setScannedAt(now);
+                        }
                         attendance.setIsLate(false);
+                        attendance.setLateMinutes((short) 0);
                         break;
                     case "LATE":
                         attendance.setStatus(Attendance.Status.present);
+                        if (attendance.getScannedAt() == null) {
+                            attendance.setScannedAt(now);
+                        }
                         attendance.setIsLate(true);
                         break;
                     case "ABSENT":
